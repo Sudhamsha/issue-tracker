@@ -25,6 +25,8 @@ const issues = [
     }
   ];
 
+
+// Get API Method
 app.get('/api/issues', (req, res) => {
   const metadata = {total_count: issues.length};
   res.json({ _metadata: metadata, records: issues });
