@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 app.use(express.static('public'));
 
+// Static list of issues
 const issues = [
     {
       id: 1,
