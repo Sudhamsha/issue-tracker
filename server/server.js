@@ -1,12 +1,31 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+'use strict';
+
+import express from 'express';
+import bodyParser from 'body-parser';
+import { MongoClient } from 'mongodb';
+import Issue from './issue.js';
+import 'babel-polyfill';
+import SourceMapSupport from 'source-map-support';
+SourceMapSupport.install();
 
 const app = express();
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
-const MongoClient = require('mongodb').MongoClient;
-const Issue = require('./issue.js');
+if (process.env.NODE_ENV !== 'production') {
+  const webpack = require('webpack');
+  const webpackDevMiddleware = require('webpack-dev-middleware');
+  const webpackHotMiddleware = require('webpack-hot-middleware');
+
+  const config = require('../webpack.config');
+  config.entry.app.push('webpack-hot-middleware/client', 'webpack/hot/only-dev-server');
+  config.plugins.push(new webpack.HotModuleReplacementPlugin());
+
+  const bundler = webpack(config);
+  app.use(webpackDevMiddleware(bundler, { noInfo: true }));
+  app.use(webpackHotMiddleware(bundler, { log: console.log }));
+}
+
 let db;
 MongoClient.connect('mongodb://localhost/issuetracker').then(connection => {
   db = connection;

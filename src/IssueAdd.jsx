@@ -1,23 +1,24 @@
 import React from 'react';
-export default class IssueAdd extends React.Component{
-  constructor(){
+
+export default class IssueAdd extends React.Component {
+  constructor() {
     super();
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(e){
+  handleSubmit(e) {
     e.preventDefault();
 
-    var form = document.forms.IssueAdd;
+    const form = document.forms.IssueAdd;
     this.props.createIssue({
       owner: form.owner.value,
       title: form.title.value,
       status: 'New',
-      created: new Date()
+      created: new Date(),
     });
 
-    form.owner.value = "";
-    form.title.value = "";
+    form.owner.value = '';
+    form.title.value = '';
   }
 
   render() {
@@ -29,6 +30,6 @@ export default class IssueAdd extends React.Component{
           <button>Add</button>
         </form>
       </div>
-    )
+    );
   }
 }
