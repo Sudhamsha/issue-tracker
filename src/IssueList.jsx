@@ -13,8 +13,18 @@ export default class IssueList extends React.Component {
     this.loadData();
   }
 
+  componentDidUpdate(prevProps) {
+    const oldQuery = prevProps.location.query;
+    const newQuery = this.props.location.query;
+
+    if (oldQuery.status === newQuery.status) {
+      return;
+    }
+    this.loadData();
+  }
+
   loadData() {
-    fetch('/api/issues').then((response) => {
+    fetch(`/api/issues${this.props.location.search}`).then((response) => {
       if (response.ok) {
         response.json().then((data) => {
           console.log(`Records Returned: ${data._metadata.total_count}`);
@@ -117,4 +127,8 @@ function IssueTable(props) {
 
 IssueRow.defaultProps = {
   title: '-- no title --',
+};
+
+IssueList.propTypes = {
+  location: React.PropTypes.object.isRequired,
 };

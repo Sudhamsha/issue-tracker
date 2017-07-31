@@ -1,9 +1,17 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 export default class IssueFilter extends React.Component { // eslint-disable-line
   render() {
+    const Separator = () => <span> | </span>;
     return (
-      <div>This a placeholder for issue filter! </div>
+      <div>
+        <Link to="/issues">All Issues</Link>
+        <Separator />
+        <Link to={{ pathname: 'issues', query: { status: 'Open' } }}>Open</Link>
+        <Separator />
+        <Link to={{ pathname: 'issues', query: { status: 'Assigned' } }}> Assigned </Link>
+      </div>
     );
   }
 }
