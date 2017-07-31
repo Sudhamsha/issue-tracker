@@ -1,20 +1,19 @@
-const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
   entry: {
     app: ['./src/App.jsx'],
-    vendor: ['react', 'react-dom', 'whatwg-fetch']
+    vendor: ['react', 'react-dom', 'whatwg-fetch', 'react-router'],
   },
   output: {
-    path: __dirname + './public',
-    filename: 'app.bundle.js'
+    path: `${__dirname}./public`,
+    filename: 'app.bundle.js',
   },
-  plugins:[
+  plugins: [
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      filename: 'vendor.bundle.js'
-    })
+      filename: 'vendor.bundle.js',
+    }),
   ],
   devtool: 'source-map',
   module: {
@@ -23,9 +22,9 @@ module.exports = {
         test: /\.jsx$/,
         loader: 'babel-loader',
         query: {
-          presets: ['react', 'es2015']
-        }
+          presets: ['react', 'es2015'],
+        },
       },
-    ]
+    ],
   },
 };

@@ -10,15 +10,20 @@
     "watch-server": "babel server --presets es2015-node6 --out-dir dist --source-maps --watch",
     "compile": "webpack",
     "watch": "webpack --watch",
+    "lint": "eslint --ext js,jsx src server webpack.config.js --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
     "babel-polyfill": "^6.13.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
-    "mongodb": "^2.2.30"
+    "mongodb": "^2.2.30",
+    "source-map-support": "^0.4.15",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -32,12 +37,11 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
     "nodemon": "^1.11.0",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
+    "react-router": "^3",
+    "react-router-dom": "^4.1.2",
     "webpack": "^3.4.1",
     "webpack-dev-middleware": "^1.11.0",
     "webpack-dev-server": "^2.6.1",
-    "webpack-hot-middleware": "^2.18.2",
-    "whatwg-fetch": "^2.0.3"
+    "webpack-hot-middleware": "^2.18.2"
   }
 }
