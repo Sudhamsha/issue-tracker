@@ -91,6 +91,7 @@ const IssueRow = props => (
     <td>{props.issue.title}</td>
   </tr>
 );
+
 function IssueTable(props) {
   const borderedStyle = { border: '1px solid silver', padding: 4 };
   const issueRows = props.issues.map(issue => <IssueRow key={issue._id} issue={issue} />);
