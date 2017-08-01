@@ -14,5 +14,5 @@ export default class IssueEdit extends React.Component
 }
 
 IssueEdit.propTypes = {
-  params: React.PropTypes.object.isRequired,
+  params: React.PropTypes.object.isRequired
 }

@@ -7,12 +7,12 @@ export default class IssueList extends React.Component {
     super();
     this.state = { issues: [] };
     this.createIssue = this.createIssue.bind(this);
+    this.setFilter = this.setFilter.bind(this);
   }
 
   componentDidMount() {
     this.loadData();
   }
-
   componentDidUpdate(prevProps) {
     const oldQuery = prevProps.location.query;
     const newQuery = this.props.location.query;
@@ -22,7 +22,9 @@ export default class IssueList extends React.Component {
     }
     this.loadData();
   }
-
+  setFilter(query) {
+    this.props.router.push({ pathname: this.props.location.pathname, query });
+  }
   loadData() {
     fetch(`/api/issues${this.props.location.search}`).then((response) => {
       if (response.ok) {
@@ -74,8 +76,7 @@ export default class IssueList extends React.Component {
   render() {
     return (
       <div>
-        <h1>Issue Tracker</h1>
-        <IssueFilter />
+        <IssueFilter setFilter={this.setFilter} />
         <hr />
         <IssueTable issues={this.state.issues} />
         <hr />
@@ -131,4 +132,5 @@ IssueRow.defaultProps = {
 
 IssueList.propTypes = {
   location: React.PropTypes.object.isRequired,
+  router: React.PropTypes.object,
 };
