@@ -1,7 +1,7 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, Redirect, hashHistory, withRouter } from 'react-router';
+import { Router, Route, Redirect, browserHistory, withRouter } from 'react-router';
 
 import IssueList from './IssueList.jsx'; // eslint-disable-line
 import IssueEdit from './IssueEdit.jsx'; // eslint-disable-line
@@ -24,7 +24,7 @@ const App = (props) => (
 );
 
 const RoutedApp = () => (
-  <Router history={hashHistory} >
+  <Router history={browserHistory} >
     <Redirect path="/" to="/issues" />
     <Route path="/" component={App}>
       <Route path="/issues" component={withRouter(IssueList)} />
