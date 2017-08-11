@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextField, RaisedButton, FontIcon } from 'material-ui';
 
 export default class IssueAdd extends React.Component {
   constructor() {
@@ -22,12 +23,25 @@ export default class IssueAdd extends React.Component {
   }
 
   render() {
+    const textfieldStyle = {
+      marginRight: 10
+    };
+
     return (
       <div>
         <form name="IssueAdd" onSubmit={this.handleSubmit}>
-          <input type="text" name="owner" placeholder="Owner" />
-          <input type="text" name="title" placeholder="Title" />
-          <button>Add</button>
+          <TextField
+              name="owner"
+              floatingLabelText="Owner"
+              style={textfieldStyle}
+          />
+          <TextField
+              name="title"
+              floatingLabelText="Title"
+              style={textfieldStyle}
+          />
+
+          <RaisedButton label="Add" type="submit"  />
         </form>
       </div>
     );

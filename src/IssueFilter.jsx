@@ -1,4 +1,5 @@
 import React from 'react';
+import {SelectField, MenuItem, RaisedButton, Toolbar, ToolbarGroup, TextField} from 'material-ui';
 
 export default class IssueFilter extends React.Component { // eslint-disable-line
   constructor(props) {
@@ -29,15 +30,15 @@ export default class IssueFilter extends React.Component { // eslint-disable-lin
 
   resetFilter(){
     this.setState({
-      tatus: this.props.initFilter.status || '',
+      status: this.props.initFilter.status || '',
       effort_gte: this.props.initFilter.effort_gte || '',
       effort_lte: this.props.initFilter.effort_lte || '',
       changed: false,
     });
   }
 
-  onChangeStatus(e) {
-    this.setState({ status: e.target.value, changed: true });
+  onChangeStatus(e, index, value) {
+    this.setState({ status: value, changed: true });
   }
 
   onChangeEffortGte(e) {
@@ -69,26 +70,43 @@ export default class IssueFilter extends React.Component { // eslint-disable-lin
 
   render() {
     const Separator = () => <span> | </span>;
+    const toolbarButton = {
+      margin: 5
+    };
+
+    const toolbarStyle = {
+      padding: 40
+    };
+
     return (
-      <div>
-        Status:
-        <select value={this.state.status} onChange={this.onChangeStatus}>
-          <option value="">(Any)</option>
-          <option value="New">New</option>
-          <option value="Open">Open</option>
-          <option value="Assigned">Assigned</option>
-          <option value="Fixed">Fixed</option>
-          <option value="Verified">Verified</option>
-          <option value="Closed">Closed</option>
-        </select>
-        &nbsp; Effor between:
-        <input size={5} value={this.state.effort_gte} onChange={this.onChangeEffortGte} />
-        &nbsp; -
-        <input size={5} value={this.state.effort_lte} onChange={this.onChangeEffortLte} />
-        <button onClick={this.applyFilter}>Apply</button>
-        <button onClick={this.resetFilter} disabled={!this.state.changed}>Reset</button>
-        <button onClick={this.clearFilter}>Clear</button>
-      </div>
+        <Toolbar style={toolbarStyle}>
+          <ToolbarGroup>
+            <SelectField
+                floatingLabelText="Status"
+                value={this.state.status ? this.state.status : null}
+                onChange={this.onChangeStatus}
+                autoWidth={true}
+
+            >
+              <MenuItem value=""  primaryText="(Any)" />
+              <MenuItem value="New" primaryText="New" />
+              <MenuItem value="Open" primaryText="Open" />
+              <MenuItem value="Assigned" primaryText="Assigned" />
+              <MenuItem value="Fixed" primaryText="Fixed" />
+              <MenuItem value="Verified" primaryText="Verified" />
+              <MenuItem value="Closed" primaryText="Closed" />
+            </SelectField>
+          </ToolbarGroup>
+          <ToolbarGroup>
+            <TextField floatingLabelText="Effort >=" size={5} value={this.state.effort_gte} onChange={this.onChangeEffortGte}/>
+            <TextField floatingLabelText="Effort <=" size={5} value={this.state.effort_lte} onChange={this.onChangeEffortLte}/>
+          </ToolbarGroup>
+          <ToolbarGroup>
+            <RaisedButton label="Apply" onClick={this.applyFilter} primary={true} style={toolbarButton}/>
+            <RaisedButton label="Reset" onClick={this.resetFilter} disabled={!this.state.changed}  style={toolbarButton} />
+            <RaisedButton label="Clear" onClick={this.clearFilter}  style={toolbarButton} />
+          </ToolbarGroup>
+        </Toolbar>
     );
   }
 }

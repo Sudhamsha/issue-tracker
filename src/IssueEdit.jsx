@@ -1,6 +1,7 @@
 import React from 'react';
 import 'whatwg-fetch';
 import { Link } from 'react-router'; // eslint-disable-line
+import { Paper, Subheader, TextField, SelectField, MenuItem, RaisedButton, FlatButton, DatePicker, Snackbar } from 'material-ui';
 import NumInput from './NumInput.jsx';
 import DateInput from './DateInput.jsx';
 
@@ -18,9 +19,15 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
         created: null,
       },
       invalidFields: {},
+      snackbar: {
+        open: false,
+        text: ''
+      }
     };
 
     this.onChange = this.onChange.bind(this);
+    this.onSelectChange = this.onSelectChange.bind(this);
+    this.onDateChange = this.onDateChange.bind(this);
     this.onValidityChange = this.onValidityChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -45,6 +52,15 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     this.setState({ invalidFields });
   }
 
+  handleIssueUpdate(value){
+      const snackbar = {
+          open: true,
+          text: value
+      };
+
+      this.setState({ snackbar });
+  };
+
   onChange(event, convertedValue) {
     const issue = Object.assign({}, this.state.issue);
     const value = (convertedValue !== undefined) ?
@@ -52,6 +68,19 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     issue[event.target.name] = value;
     this.setState({ issue });
   }
+
+  onSelectChange(event, index, value) {
+        const issue = Object.assign({}, this.state.issue);
+        issue['status'] = value;
+        this.setState({ issue });
+    }
+
+  onDateChange(event, convertedValue) {
+        const issue = Object.assign({}, this.state.issue);
+        const value = convertedValue;
+        issue['completionDate'] = value;
+        this.setState({ issue });
+    }
 
   onSubmit(event) {
     event.preventDefault();
@@ -72,15 +101,15 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
               completionDate);
           }
           this.setState({ issue: updatedIssue });
-          alert('Updated Issue');
+          this.handleIssueUpdate('Updated Issue');
         });
       } else {
         response.json().then(error => {
-          alert(`Failed to update issue: ${error.message}`);
+          this.handleIssueUpdate(`Failed to update issue: ${error.message}`);
         });
       }
     }).catch(err => {
-      alert(`Error in sending data to server: ${err.message}`);
+      this.handleIssueUpdate(`Error in sending data to server: ${err.message}`);
     });
   }
 
@@ -95,57 +124,110 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
         });
       } else {
         response.json().then(error => {
-          alert(`Failed to fetch issue: ${error.message}`);
+          this.handleIssueUpdate(`Failed to fetch issue: ${error.message}`);
         });
       }
     }).catch(err => {
-      alert(`Failed to fetch data from server: ${err.message}`)
+      this.handleIssueUpdate(`Failed to fetch data from server: ${err.message}`);
     });
   }
 
   render() {
     const issue = this.state.issue;
+      const paperStyle = {
+          marginTop: 20,
+          padding: 20,
+      };
+      const subHeader = {
+        padding: 0
+      };
+
+      const backButton = {
+          marginTop: 20,
+        marginLeft: 10
+      };
+
     const validationMessage = Object.keys(this.state.invalidFields).
       length === 0 ? null
       : (<div className="error">Invalid Fields</div>);
     return (
-      <div>
         <form onSubmit={this.onSubmit}>
-          Id: {issue._id}
-          <br />
-          Created: {issue.created ? issue.created.toDateString() : ''}
-          <br />
-          Status: <select
-            name="status"
-            value={issue.status}
-            onChange={this.onChange}
+          <Subheader style={subHeader}>Edit Issue</Subheader>
+          <TextField
+              disabled={true}
+              hintText="ID"
+              value={issue._id}
+              floatingLabelText="ID"
+              fullWidth={true}
+          /><br />
+          <TextField
+              disabled={true}
+              hintText="Created"
+              value={issue.created ? issue.created.toDateString() : ''}
+              floatingLabelText="Created"
+              fullWidth={true}
+          /><br />
+
+          <SelectField
+              floatingLabelText="Status"
+              name="status"
+              value={issue.status}
+              onChange={this.onSelectChange}
+              fullWidth={true}
+
           >
-            <option value="New">New</option>
-            <option value="Open">Open</option>
-            <option value="Assigned">Assigned</option>
-            <option value="Fixed">Fixed</option>
-            <option value="Verified">Verified</option>
-            <option value="Closed">Closed</option>
-          </select>
+            <MenuItem value=""  primaryText="(Any)" />
+            <MenuItem value="New" primaryText="New" />
+            <MenuItem value="Open" primaryText="Open" />
+            <MenuItem value="Assigned" primaryText="Assigned" />
+            <MenuItem value="Fixed" primaryText="Fixed" />
+            <MenuItem value="Verified" primaryText="Verified" />
+            <MenuItem value="Closed" primaryText="Closed" />
+          </SelectField>
           <br />
-          Owner: <input name="owner" value={issue.owner} onChange={this.onChange} />
-          <br />
-          Effort: <NumInput name="effort" size={5} value={issue.effort} onChange={this.onChange} />
-          <br />
-          Completion Date: <DateInput
-            name="completionDate"
-            value={issue.completionDate}
-            onChange={this.onChange}
-            onValidityChange={this.onValidityChange}
+          <TextField
+              name="owner"
+              floatingLabelText="Owner"
+              value={issue.owner}
+              onChange={this.onChange}
+              fullWidth={true}
           />
           <br />
-          Title: <input name="title" value={issue.title} onChange={this.onChange} />
+          <TextField
+              name="effort"
+              floatingLabelText="Effort"
+              value={issue.effort ? issue.effort: ''}
+              onChange={this.onChange}
+              fullWidth={true}
+          />
           <br />
-          {validationMessage}
-          <button type="submit">Submit</button>
-          <Link to="/issues">Back to issues</Link>
+          <DatePicker
+              name="completionDate"
+              hintText="Completion Date"
+              container="inline"
+              value={issue.completionDate}
+              onChange={this.onDateChange}
+              fullWidth={true}
+          />
+          <br />
+          <TextField
+              name="title"
+              floatingLabelText="Title"
+              value={issue.title}
+              onChange={this.onChange}
+              fullWidth={true}
+          />
+          <br />
+            {validationMessage}
+          <RaisedButton type="submit" primary={true} label="Submit"/>
+
+          <FlatButton label="Back" primary={true} style={backButton} containerElement={<Link to="/issues">Back</Link>} />
+          <Snackbar
+              open={this.state.snackbar.open}
+              message={this.state.snackbar.text}
+              autoHideDuration={4000}
+          />
         </form>
-      </div>
     );
   }
 }
