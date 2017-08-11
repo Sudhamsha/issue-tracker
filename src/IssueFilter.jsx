@@ -9,7 +9,7 @@ export default class IssueFilter extends React.Component { // eslint-disable-lin
       effort_gte: props.initFilter.effort_gte || '',
       effort_lte: props.initFilter.effort_lte || '',
       changed: false,
-    }
+    };
 
     this.onChangeStatus = this.onChangeStatus.bind(this);
     this.onChangeEffortGte = this.onChangeEffortGte.bind(this);
@@ -58,8 +58,8 @@ export default class IssueFilter extends React.Component { // eslint-disable-lin
   applyFilter() {
     const newFilter = {};
     if (this.state.status) newFilter.status = this.state.status;
-    if (this.state.effort_gte) newFilter.effort_gte = this.state.effort_gte;
-    if (this.state.effort_lte) newFilter.effort_lte = this.state.effort_lte;
+    if (this.state.effort_gte) newFilter.effort_gte = parseInt(this.state.effort_gte);
+    if (this.state.effort_lte) newFilter.effort_lte = parseInt(this.state.effort_lte);
     this.props.setFilter(newFilter);
   }
 

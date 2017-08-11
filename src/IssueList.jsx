@@ -1,7 +1,7 @@
 import React from 'react';
 import 'whatwg-fetch';
 import { Link } from 'react-router';
-import { Divider, IconButton, FontIcon } from 'material-ui';
+import { Divider, IconButton, FontIcon, Snackbar } from 'material-ui';
 import {
     Table,
     TableBody,
@@ -14,7 +14,10 @@ import {
 export default class IssueList extends React.Component {
   constructor() {
     super();
-    this.state = { issues: [] };
+    this.state = { issues: [], snackbar: {
+        open: false,
+        text: ''
+    } };
     this.createIssue = this.createIssue.bind(this);
     this.setFilter = this.setFilter.bind(this);
     this.deleteIssue = this.deleteIssue.bind(this);
@@ -35,8 +38,19 @@ export default class IssueList extends React.Component {
     this.loadData();
   }
   setFilter(query) {
+      console.log(query);
     this.props.router.push({ pathname: this.props.location.pathname, query });
   }
+
+    showSnackbar(value){
+        const snackbar = {
+            open: true,
+            text: value
+        };
+
+        this.setState({ snackbar });
+    };
+
   loadData() {
     fetch(`/api/issues${this.props.location.search}`).then((response) => {
       if (response.ok) {
@@ -52,7 +66,7 @@ export default class IssueList extends React.Component {
         });
       } else {
         response.json().then((error) => {
-          alert(`Failed to fetch issues: ${error.message}`);
+          this.showSnackbar(`Failed to fetch issues: ${error.message}`);
         });
       }
     }).catch((err) => {
@@ -74,10 +88,12 @@ export default class IssueList extends React.Component {
           }
           const newIssues = this.state.issues.concat(updatedIssue);
           this.setState({ issues: newIssues });
+          this.showSnackbar('Issue Added');
+
         });
       } else {
         response.json().then((error) => {
-          alert(`Failed to add issue: ${error.message}`);
+          this.showSnackbar(`Failed to add issue: ${error.message}`);
         });
       }
     }).catch((err) => {
@@ -87,8 +103,12 @@ export default class IssueList extends React.Component {
 
   deleteIssue(id) {
     fetch(`/api/issues/${id}`, { method: 'DELETE' }).then(response => {
-      if (!response.ok) alert('Failed to delete issue');
-      else this.loadData();
+      if (!response.ok) {
+          this.showSnackbar('Cannot delete the issue');
+      } else {
+          this.showSnackbar('Issue deleted');
+          this.loadData();
+      }
     });
   }
 
@@ -105,6 +125,11 @@ export default class IssueList extends React.Component {
         <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
         <Divider style={dividerStyle} />
         <IssueAdd createIssue={this.createIssue} />
+        <Snackbar
+          open={this.state.snackbar.open}
+          message={this.state.snackbar.text}
+          autoHideDuration={4000}
+      />
       </div>
     );
   }
@@ -158,6 +183,7 @@ function IssueTable(props) {
         {issueRows}
       </TableBody>
       </Table>
+
   );
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import 'whatwg-fetch';
 import { Link } from 'react-router'; // eslint-disable-line
 import { Paper, Subheader, TextField, SelectField, MenuItem, RaisedButton, FlatButton, DatePicker, Snackbar } from 'material-ui';
-import NumInput from './NumInput.jsx';
+import NumberInput from 'material-ui-number-input';
 import DateInput from './DateInput.jsx';
 
 export default class IssueEdit extends React.Component { // eslint-disable-line
@@ -57,7 +57,6 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
           open: true,
           text: value
       };
-
       this.setState({ snackbar });
   };
 
@@ -65,7 +64,13 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     const issue = Object.assign({}, this.state.issue);
     const value = (convertedValue !== undefined) ?
       convertedValue : event.target.value;
-    issue[event.target.name] = value;
+      if(event.target.name == 'effort'){
+        issue[event.target.name] = parseInt(value);
+      } else{
+        issue[event.target.name] = value;
+      }
+
+
     this.setState({ issue });
   }
 
@@ -204,6 +209,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
           <DatePicker
               name="completionDate"
               hintText="Completion Date"
+              floatingLabelText="Completion Date"
               container="inline"
               value={issue.completionDate}
               onChange={this.onDateChange}
@@ -221,7 +227,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
             {validationMessage}
           <RaisedButton type="submit" primary={true} label="Submit"/>
 
-          <FlatButton label="Back" primary={true} style={backButton} containerElement={<Link to="/issues">Back</Link>} />
+          <RaisedButton label="Back" primary={false} style={backButton} containerElement={<Link to="/issues">Back</Link>} />
           <Snackbar
               open={this.state.snackbar.open}
               message={this.state.snackbar.text}
