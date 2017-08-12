@@ -179,7 +179,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
               value={issue.status}
               onChange={this.onSelectChange}
               fullWidth={true}
-
+              required
           >
             <MenuItem value=""  primaryText="(Any)" />
             <MenuItem value="New" primaryText="New" />
@@ -196,6 +196,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
               value={issue.owner}
               onChange={this.onChange}
               fullWidth={true}
+              required
           />
           <br />
           <TextField
@@ -204,6 +205,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
               value={issue.effort ? issue.effort: ''}
               onChange={this.onChange}
               fullWidth={true}
+              required
           />
           <br />
           <DatePicker
@@ -222,6 +224,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
               value={issue.title}
               onChange={this.onChange}
               fullWidth={true}
+              required
           />
           <br />
             {validationMessage}

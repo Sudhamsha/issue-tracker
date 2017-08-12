@@ -8,6 +8,7 @@ import {AppBar, Tabs, Tab, FontIcon, Paper} from 'material-ui';
 injectTapEventPlugin();
 import IssueList from './IssueList.jsx'; // eslint-disable-line
 import IssueEdit from './IssueEdit.jsx'; // eslint-disable-line
+import IssueAddNavItem from './IssueAddNavItem.jsx';
 
 const contentNode = document.getElementById('contents');
 const NoMatch = () => <p> 404 Page not found</p>;
@@ -27,7 +28,7 @@ const App = (props) => (
         <AppBar
             title={"Issue Tracker"}
             iconElementRight={
-                <FontIcon className="material-icons"  style={iconStyles}> add_alert </FontIcon>
+                <IssueAddNavItem />
             }
         >
             <Tabs>

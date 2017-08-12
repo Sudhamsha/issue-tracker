@@ -124,7 +124,6 @@ export default class IssueList extends React.Component {
         <Divider style={dividerStyle}/>
         <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
         <Divider style={dividerStyle} />
-        <IssueAdd createIssue={this.createIssue} />
         <Snackbar
           open={this.state.snackbar.open}
           message={this.state.snackbar.text}
