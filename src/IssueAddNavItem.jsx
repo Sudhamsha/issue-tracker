@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import { withRouter } from 'react-router'; // eslint-disable-line
 import { TextField, RaisedButton, FontIcon, Dialog, Snackbar } from 'material-ui';
+import AutoComplete from 'material-ui/AutoComplete';
 
 class IssueAddNavItem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             showing: false,
+            searchIssues: [],
             snackbar: {
                 open: false,
                 text: ''
@@ -18,6 +20,9 @@ class IssueAddNavItem extends React.Component {
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.submit = this.submit.bind(this);
+        this.searchIssues = this.searchIssues.bind(this);
+        this.filterOptions = this.filterOptions.bind(this);
+        this.selectIssue = this.selectIssue.bind(this);
     }
 
     showModal() {
@@ -62,6 +67,33 @@ class IssueAddNavItem extends React.Component {
         });
     }
 
+    searchIssues(input) {
+    if (input.length < 2) return Promise.resolve({ options: [] });
+    return fetch(`/api/issues?search=${input}`).then(response => {
+        if (!response.ok) return response.json().then(error => Promise.
+        reject(error));
+        return response.json().then(data => {
+            const options = data.records.map(issue => ({
+                value: issue._id,
+                text: `${issue._id.substr(-4)}: ${issue.title}`,
+            }));
+
+            this.setState({
+                searchIssues: options
+            });
+            return { options };
+        }).catch(error => {
+            alert(`Error fetching data from server: ${error}`);
+        });
+    });
+}
+    filterOptions(options) {
+    return options;
+}
+    selectIssue(item) {
+    if (item) this.props.router.push(`/issues/${item.value}`);
+    }
+
     render() {
         const textfieldStyle = {
             marginRight: 10
@@ -76,6 +108,14 @@ class IssueAddNavItem extends React.Component {
 
         return (
             <div>
+                <AutoComplete
+                    hintText="Search"
+                    filter={this.filterOptions}
+                    dataSource={this.state.searchIssues}
+                    onUpdateInput={this.searchIssues}
+                    onNewRequest = {this.selectIssue}
+                />
+
                 <FontIcon className="material-icons" onClick={this.showModal} style={iconStyles}> add_alert </FontIcon>
                 <Dialog
                     title="Add Issue"

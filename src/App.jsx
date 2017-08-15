@@ -10,6 +10,7 @@ import IssueList from './IssueList.jsx'; // eslint-disable-line
 import IssueEdit from './IssueEdit.jsx'; // eslint-disable-line
 import IssueAddNavItem from './IssueAddNavItem.jsx';
 import IssueReport from './IssueReport.jsx';
+import AutoComplete from 'material-ui/AutoComplete';
 
 const contentNode = document.getElementById('contents');
 const NoMatch = () => <p> 404 Page not found</p>;
@@ -24,27 +25,32 @@ const paperStyle = {
     marginTop: 20,
     padding: 10,
 };
-const App = (props) => (
-    <div>
-        <AppBar
-            title={"Issue Tracker"}
-            iconElementRight={
-                <IssueAddNavItem />
-            }
-        >
-            <Tabs>
-                <Tab label="&nbsp;Issues&nbsp;" containerElement={<Link to="/issues"/>}/>
-                <Tab label="&nbsp;Reports &nbsp;" containerElement={<Link to="/reports"/>} />
-            </Tabs>
-        </AppBar>
-        <Paper style={paperStyle}>
-            {props.children}
-        </Paper>
-        <Paper style={paperStyle}>
-        Full source code available at this <a href="https://github.com/sudhamsha/issue-tracker"> GitHub repository</a>.
-    </Paper>
-    </div>
-);
+
+const App = (props) => {
+
+    return  (
+        <div>
+            <AppBar
+                title={"Issue Tracker"}
+                iconElementRight={
+                    <IssueAddNavItem />
+                }
+            >
+                <Tabs>
+                    <Tab label="&nbsp;Issues&nbsp;" containerElement={<Link to="/issues"/>}/>
+                    <Tab label="&nbsp;Reports &nbsp;" containerElement={<Link to="/reports"/>} />
+                </Tabs>
+            </AppBar>
+            <Paper style={paperStyle}>
+                {props.children}
+            </Paper>
+            <Paper style={paperStyle}>
+                Full source code available at this <a href="https://github.com/sudhamsha/issue-tracker"> GitHub repository</a>.
+            </Paper>
+        </div>
+    );
+    }
+;
 
 const RoutedApp = () => (
     <MuiThemeProvider>
@@ -64,6 +70,7 @@ ReactDOM.render(<RoutedApp />, contentNode);
 
 App.propTypes = {
   children: React.PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  router: React.PropTypes.object,
 };
 
 if (module.hot) {
