@@ -8,7 +8,9 @@ const validIssueStatus = {
   New: true,
   Open: true,
   Assigned: true,
-  Fixed: true
+  Fixed: true,
+  Verified: true,
+  Closed: true
 };
 
 const issueFieldType = {

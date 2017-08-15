@@ -10,17 +10,21 @@ import {
     TableRow,
     TableRowColumn,
 } from 'material-ui/Table';
+import Pagination from 'material-ui-pagination';
 
+const PAGE_SIZE = 10;
 export default class IssueList extends React.Component {
   constructor() {
     super();
     this.state = { issues: [], snackbar: {
         open: false,
         text: ''
-    } };
+    }};
     this.createIssue = this.createIssue.bind(this);
     this.setFilter = this.setFilter.bind(this);
     this.deleteIssue = this.deleteIssue.bind(this);
+    this.setDisplay = this.setDisplay.bind(this);
+    this.selectPage = this.selectPage.bind(this);
   }
 
   componentDidMount() {
@@ -29,19 +33,21 @@ export default class IssueList extends React.Component {
   componentDidUpdate(prevProps) {
     const oldQuery = prevProps.location.query;
     const newQuery = this.props.location.query;
-
     if (oldQuery.status === newQuery.status
         && oldQuery.effort_gte === newQuery.effort_gte
-        && oldQuery.effort_lte === newQuery.effort_lte) {
+        && oldQuery.effort_lte === newQuery.effort_lte
+        && oldQuery._page === newQuery._page
+    ) {
       return;
     }
     this.loadData();
   }
   setFilter(query) {
+      console.log(query);
     this.props.router.push({ pathname: this.props.location.pathname, query });
   }
 
-    showSnackbar(value){
+  showSnackbar(value){
         const snackbar = {
             open: true,
             text: value
@@ -51,17 +57,27 @@ export default class IssueList extends React.Component {
     };
 
   loadData() {
-    fetch(`/api/issues${this.props.location.search}`).then((response) => {
+      const query = Object.assign({}, this.props.location.query);
+      const pageStr = query._page;
+      if (pageStr) {
+          delete query._page;
+          query._offset = (parseInt(pageStr, 10) - 1) * PAGE_SIZE;
+      }
+      query._limit = PAGE_SIZE;
+      const search = Object.keys(query).map(k => `${k}=${query[k]}`).join('&');
+
+    fetch(`/api/issues?${search}`).then((response) => {
+
       if (response.ok) {
         response.json().then((data) => {
-          console.log(`Records Returned: ${data._metadata.total_count}`);
+          console.log(`Records Returned: ${data.metadata.totalCount}`);
           data.records.forEach((issue) => {
             issue.created = new Date(issue.created);
             if (issue.completionDate) {
               issue.completionDate = new Date(issue.completionDate);
             }
           });
-          this.setState({ issues: data.records });
+          this.setState({ issues: data.records, totalCount: data.metadata.totalCount, });
         });
       } else {
         response.json().then((error) => {
@@ -111,6 +127,29 @@ export default class IssueList extends React.Component {
     });
   }
 
+    setDisplay(event, display) {
+        // eslint-disable-next-line no-param-reassign
+        display = display.trim();
+        if (display.match(/^\d*$/)) {
+            if (display !== '') {
+                // eslint-disable-next-line no-param-reassign
+                display = parseInt(display, 10);
+            } else {
+                // eslint-disable-next-line no-param-reassign
+                display = 0;
+            }
+
+            this.setState({ display });
+        }
+    }
+
+    selectPage(eventKey) {
+        const query = Object.assign(this.props.location.query,
+ { _page: eventKey });
+        this.props.router.push({ pathname: this.props.location.pathname,
+ query });
+    }
+
   render() {
     const dividerStyle = {
       marginTop: 10,
@@ -123,6 +162,12 @@ export default class IssueList extends React.Component {
         <Divider style={dividerStyle}/>
         <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
         <Divider style={dividerStyle} />
+          <Pagination
+              total = {Math.ceil(this.state.totalCount / PAGE_SIZE)}
+              current = {parseInt(this.props.location.query._page || '1', 10)}
+              display = { PAGE_SIZE }
+              onChange = { this.selectPage }
+          />
         <Snackbar
           open={this.state.snackbar.open}
           message={this.state.snackbar.text}
@@ -164,6 +209,7 @@ function IssueTable(props) {
   const borderedStyle = { border: '1px solid silver', padding: 4 };
   const issueRows = props.issues.map(issue => <IssueRow key={issue._id} issue={issue} deleteIssue={props.deleteIssue} />);
   return (
+      <div>
       <Table>
         <TableHeader displaySelectAll={false}>
           <TableRow>
@@ -181,6 +227,7 @@ function IssueTable(props) {
         {issueRows}
       </TableBody>
       </Table>
+      </div>
 
   );
 }
