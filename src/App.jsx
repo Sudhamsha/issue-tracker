@@ -9,6 +9,7 @@ injectTapEventPlugin();
 import IssueList from './IssueList.jsx'; // eslint-disable-line
 import IssueEdit from './IssueEdit.jsx'; // eslint-disable-line
 import IssueAddNavItem from './IssueAddNavItem.jsx';
+import IssueReport from './IssueReport.jsx';
 
 const contentNode = document.getElementById('contents');
 const NoMatch = () => <p> 404 Page not found</p>;
@@ -52,6 +53,7 @@ const RoutedApp = () => (
         <Route path="/" component={App}>
           <Route path="/issues" component={withRouter(IssueList)} />
           <Route path="/issues/:id" component={IssueEdit} />
+          <Route path="reports" component={withRouter(IssueReport)} />
           <Route path="*" component={NoMatch} />
         </Route>
       </Router>

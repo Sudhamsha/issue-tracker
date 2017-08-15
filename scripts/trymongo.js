@@ -45,7 +45,7 @@ function testWithPromises(){
   let db;
   MongoClient.connect('mongodb://localhost/playground').then(connection => {
     db = connection;
-    return db.collection('employees')....insertOne({id: 1, name: 'P'});
+    return db.collection('employees').insertOne({id: 1, name: 'P'});
   }).then(result => {
     console.log("Result", result.insertId);
     return db.collection('employees').find({id: 1}).toArray();
@@ -60,9 +60,9 @@ function testWithPromises(){
 function testWithGenerator(){
   const co = require('co');
   co(function*() {
-    cons db = yield MongoClient.connect('mongodb://localhost/playground');
+    const db = yield MongoClient.connect('mongodb://localhost/playground');
 
-    const result = yield.db.collection('employees')...insertOne({id: 1, name: 'CG'});
+    const result = yield.db.collection('employees').insertOne({id: 1, name: 'CG'});
     console.log('Result of insert', result.insertId);
 
     const docs = yield db.collection('employees').find({id: 1}).toArray();
