@@ -4,6 +4,7 @@ import 'whatwg-fetch';
 import { withRouter } from 'react-router'; // eslint-disable-line
 import { TextField, RaisedButton, FontIcon, Dialog, Snackbar } from 'material-ui';
 import AutoComplete from 'material-ui/AutoComplete';
+import SigninNavItem from './SigninNavItem.jsx';
 
 class IssueAddNavItem extends React.Component {
     constructor(props) {
@@ -106,6 +107,7 @@ class IssueAddNavItem extends React.Component {
             cursor: 'pointer'
         };
 
+        console.log(this.props);
         return (
             <div>
                 <AutoComplete
@@ -116,7 +118,7 @@ class IssueAddNavItem extends React.Component {
                     onNewRequest = {this.selectIssue}
                 />
 
-                <FontIcon className="material-icons" onClick={this.showModal} style={iconStyles}> add_alert </FontIcon>
+                {this.props.user.signedIn ? (<FontIcon className="material-icons" onClick={this.showModal} style={iconStyles} > add_alert </FontIcon>) : null}
                 <Dialog
                     title="Add Issue"
                     modal={true}
@@ -144,6 +146,11 @@ class IssueAddNavItem extends React.Component {
                         <RaisedButton label="Close" onClick={this.hideModal}  />
                     </form>
                 </Dialog>
+                <SigninNavItem
+                    user={this.props.user} onSignin={this.props.onSignin}
+                    onSignout={this.props.onSignout}
+                    showError={this.handleIssueUpdate} showSuccess={this.handleIssueUpdate}
+                />
             </div>
 
         );
@@ -152,5 +159,8 @@ class IssueAddNavItem extends React.Component {
 
 IssueAddNavItem.propTypes = {
     router: React.PropTypes.object,
+    onSignin: React.PropTypes.func.isRequired,
+    onSignout: React.PropTypes.func.isRequired,
+    user: React.PropTypes.object,
 };
 export default withRouter(IssueAddNavItem);

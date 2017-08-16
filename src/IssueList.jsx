@@ -117,7 +117,7 @@ export default class IssueList extends React.Component {
   }
 
   deleteIssue(id) {
-    fetch(`/api/issues/${id}`, { method: 'DELETE' }).then(response => {
+    fetch(`/api/issues/${id}`, { cookie: req.headers.cookie, method: 'DELETE' }).then(response => {
       if (!response.ok) {
           this.showSnackbar('Cannot delete the issue');
       } else {
@@ -160,7 +160,7 @@ export default class IssueList extends React.Component {
       <div>
         <IssueFilter setFilter={this.setFilter} initFilter={this.props.location.query} />
         <Divider style={dividerStyle}/>
-        <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
+        <IssueTable issues={this.state.issues} deleteIssue={this.props.user.signedIn ? this.deleteIssue : null} />
         <Divider style={dividerStyle} />
           <Pagination
               total = {Math.ceil(this.state.totalCount / PAGE_SIZE)}
@@ -197,9 +197,11 @@ const IssueRow = (props) => {
       <TableRowColumn>{props.issue.completionDate ? props.issue.completionDate.toDateString() : ''}</TableRowColumn>
       <TableRowColumn>{props.issue.title}</TableRowColumn>
       <TableRowColumn>
+          {props.deleteIssue ? (
         <IconButton onClick={onDeleteClick}>
           <FontIcon className="material-icons">delete</FontIcon>
         </IconButton>
+              ) : null}
       </TableRowColumn>
       </TableRow>
 );
@@ -239,11 +241,12 @@ IssueRow.defaultProps = {
 IssueList.propTypes = {
   location: React.PropTypes.object.isRequired,
   router: React.PropTypes.object,
+  user: React.PropTypes.object.isRequired,
 };
 
 IssueRow.propTypes = {
   issue: React.PropTypes.object.isRequired,
-  deleteIssue: React.PropTypes.func.isRequired,
+  deleteIssue: React.PropTypes.func,
 };
 
 IssueTable.propTypes = {

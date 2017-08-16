@@ -24,6 +24,14 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
+var _nodeFetch = require('node-fetch');
+
+var _nodeFetch2 = _interopRequireDefault(_nodeFetch);
+
+var _expressSession = require('express-session');
+
+var _expressSession2 = _interopRequireDefault(_expressSession);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _sourceMapSupport2.default.install();
@@ -31,6 +39,8 @@ _sourceMapSupport2.default.install();
 const app = (0, _express2.default)();
 app.use(_express2.default.static('public'));
 app.use(_bodyParser2.default.json());
+
+app.use((0, _expressSession2.default)({ secret: 'h7e3f5s6', resave: false, saveUninitialized: true }));
 
 if (process.env.NODE_ENV !== 'production') {
   const webpack = require('webpack'); // eslint-disable-line
@@ -54,6 +64,53 @@ _mongodb.MongoClient.connect('mongodb://localhost/issuetracker').then(connection
   });
 }).catch(error => {
   console.log('ERROR', error);
+});
+
+// Check User
+app.all('/api/*', (req, res, next) => {
+  if (req.method === 'DELETE' || req.method === 'POST' || req.method === 'PUT') {
+    if (!req.session || !req.session.user) {
+      res.status(403).send({
+        message: 'You are not authorized to perform the operation'
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+app.get('/api/users/me', (req, res) => {
+  if (req.session && req.session.user) {
+    res.json(req.session.user);
+  } else {
+    res.json({ signedIn: false, name: '' });
+  }
+});
+
+app.post('/signin', (req, res) => {
+  if (!req.body.id_token) {
+    res.status(400).send({ code: 400, message: 'Missing Token.' });
+    return;
+  }
+  (0, _nodeFetch2.default)(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${req.body.id_token}`).then(response => {
+    if (!response.ok) response.json().then(error => Promise.reject(error));
+    response.json().then(data => {
+      req.session.user = {
+        signedIn: true, name: data.given_name
+      };
+      res.json(req.session.user);
+    });
+  }).catch(error => {
+    console.log(error);
+    res.status(500).json({ message: `Internal Server Error: ${error}` });
+  });
+});
+
+app.post('/signout', (req, res) => {
+  if (req.session) req.session.destroy();
+  res.json({ status: 'ok' });
 });
 
 // Get Issues

@@ -26,29 +26,51 @@ const paperStyle = {
     padding: 10,
 };
 
-const App = (props) => {
+export default class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: { signedIn: false, name: '' },
+        };
+        this.onSignin = this.onSignin.bind(this);
+        this.onSignout = this.onSignout.bind(this);
+    }
 
-    return  (
-        <div>
-            <AppBar
-                title={"Issue Tracker"}
-                iconElementRight={
-                    <IssueAddNavItem />
-                }
-            >
-                <Tabs>
-                    <Tab label="&nbsp;Issues&nbsp;" containerElement={<Link to="/issues"/>}/>
-                    <Tab label="&nbsp;Reports &nbsp;" containerElement={<Link to="/reports"/>} />
-                </Tabs>
-            </AppBar>
-            <Paper style={paperStyle}>
-                {props.children}
-            </Paper>
-            <Paper style={paperStyle}>
-                Full source code available at this <a href="https://github.com/sudhamsha/issue-tracker"> GitHub repository</a>.
-            </Paper>
-        </div>
-    );
+    onSignin(name) {
+        this.setState({ user: { signedIn: true, name } });
+    }
+    onSignout() {
+        this.setState({ user: { signedIn: false, name: '' } });
+    }
+
+    render() {
+        const childrenWithUser = React.Children.map(this.props.children, child =>
+            React.cloneElement(child, { user: this.state.user })
+        );
+        return  (
+
+            <div>
+                <AppBar
+                    title={"Issue Tracker"}
+                    iconElementRight={
+                        <IssueAddNavItem user={this.state.user} onSignin={this.onSignin}
+                        onSignout={this.onSignout} />
+                    }
+                >
+                    <Tabs>
+                        <Tab label="&nbsp;Issues&nbsp;" containerElement={<Link to="/issues"/>}/>
+                        <Tab label="&nbsp;Reports &nbsp;" containerElement={<Link to="/reports"/>} />
+                    </Tabs>
+                </AppBar>
+                <Paper style={paperStyle}>
+                    {childrenWithUser}
+                </Paper>
+                <Paper style={paperStyle}>
+                    Full source code available at this <a href="https://github.com/sudhamsha/issue-tracker"> GitHub repository</a>.
+                </Paper>
+            </div>
+        );
+    }
     }
 ;
 

@@ -228,7 +228,8 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
           />
           <br />
             {validationMessage}
-          <RaisedButton type="submit" primary={true} label="Submit"/>
+          <RaisedButton type="submit" primary={true} label="Submit"  disabled={!this.
+              props.user.signedIn} />
 
           <RaisedButton label="Back" primary={false} style={backButton} containerElement={<Link to="/issues">Back</Link>} />
           <Snackbar
@@ -243,4 +244,5 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
 
 IssueEdit.propTypes = {
   params: React.PropTypes.object.isRequired,
+  user: React.PropTypes.object.isRequired,
 };
